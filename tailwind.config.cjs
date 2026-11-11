@@ -1,36 +1,16 @@
 /** @type {import('tailwindcss').Config} */
-
-
 module.exports = {
-  mode: 'jit',
-  content: [
-    './src/**/*.tsx',
-    './index.html'
-  ],
+  content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
-    fontFamily:{
-      sans:['Epilogue', 'sans-serif']
+    fontFamily: {
+      sans: ["Epilogue", "sans-serif"],
     },
     extend: {
-      backgroundImage:{
+      backgroundImage: {
         trybe: "url('/background.svg')",
-        trybelight: "url('/background-light.svg')"
-      }, 
-      animation: {
-        fadeIn: "fadeIn 2s ease-in forwards"
+        trybelight: "url('/background-light.svg')",
       },
-      keyframes: {
-        fadeIn: {
-          "0%": { opacity: 0 },
-          "100%": { opacity: 1 }
-        }
-      }
     },
-    variants: {
-      animation: ["motion-safe"]
-    }
   },
-  plugins: [
-    require('tailwind-scrollbar-hide')
-  ],
-}
+  plugins: [require("tailwind-scrollbar-hide")],
+};
