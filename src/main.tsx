@@ -1,9 +1,17 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./routes/App";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { App } from "./App";
+import { ThemeProvider } from "./hooks/useTheme";
+import "./styles/index.css";
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+AOS.init();
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </StrictMode>,
 );

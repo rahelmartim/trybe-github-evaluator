@@ -1,44 +1,39 @@
 {
-  "name": "tge-front",
+  "name": "trybe-github-evaluator-front",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "Web app that grades a GitHub profile against 10 criteria.",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.2.0",
-    "@fortawesome/free-solid-svg-icons": "^6.2.0",
-    "@fortawesome/react-fontawesome": "^0.2.0",
-    "@radix-ui/react-hover-card": "^1.0.0",
+    "@phosphor-icons/react": "^2.1.10",
     "aos": "^2.3.4",
-    "axios": "^0.27.2",
-    "chart.js": "^3.9.1",
-    "localforage": "^1.10.0",
-    "match-sorter": "^6.3.1",
-    "phosphor-react": "^1.4.1",
-    "react": "^18.2.0",
-    "react-chartjs-2": "^4.3.1",
-    "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.4.1",
-    "sort-by": "^1.2.0",
-    "tailwind-scrollbar-hide": "^1.1.7"
+    "chart.js": "^4.6.1",
+    "react": "^19.3.1",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "^19.3.1",
+    "react-router": "^7.18.5"
   },
   "devDependencies": {
-    "@types/aos": "^3.0.4",
-    "@types/node": "^18.7.18",
-    "@types/react": "^18.0.17",
-    "@types/react-copy-to-clipboard": "^5.0.4",
-    "@types/react-dom": "^18.0.6",
-    "@types/tough-cookie": "^4.0.2",
-    "@vitejs/plugin-react": "^2.1.0",
-    "autoprefixer": "^10.4.12",
-    "postcss": "^8.4.16",
-    "tailwindcss": "^3.1.8",
-    "typescript": "^4.6.4",
-    "vite": "^3.1.0"
+    "@types/aos": "^3.0.8",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "autoprefixer": "^10.6.2",
+    "postcss": "^8.5.32",
+    "tailwind-scrollbar-hide": "^1.3.1",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.8"
   }
 }
