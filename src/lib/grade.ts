@@ -1,4 +1,4 @@
-import type { Evaluation } from "../api/evaluator";
+import type { CriterionKey } from "../../shared/evaluation";
 
 interface GradeTier {
   minGrade: number;
@@ -20,10 +20,8 @@ export function getGradeTier(grade: number): GradeTier {
   return TIERS.find((tier) => grade >= tier.minGrade) ?? TIERS[TIERS.length - 1];
 }
 
-type CriterionKey = keyof Evaluation["criteria"];
-
 export const CRITERIA: { key: CriterionKey; label: string }[] = [
-  { key: "hasPhoto", label: "Foto de perfil mostra seu rosto?" },
+  { key: "hasPhoto", label: "Tem uma foto de perfil personalizada?" },
   { key: "hasReadme", label: "Tem um README só seu?" },
   { key: "hasEmail", label: "Colocou seu email no README?" },
   { key: "hasLinkedin", label: "Colocou seu LinkedIn no GitHub?" },

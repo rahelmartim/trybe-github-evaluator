@@ -13,18 +13,39 @@ Live demo: https://tge-kappa.vercel.app
 
 Each criterion that passes adds 1 point to the grade.
 
-1. The profile photo shows your face.
-2. You have a profile README.
-3. Your README contains your email address.
-4. Your profile contains a link to LinkedIn.
-5. Your README lists 5 or more technologies.
-6. Your README lists 10 or more technologies.
-7. You have 5 or more public repositories.
-8. You have 10 or more public repositories.
-9. You have 2 or more pinned repositories.
-10. You have 4 or more pinned repositories.
+| # | Criterion | How the app checks it |
+| --- | --- | --- |
+| 1 | Custom profile photo | The avatar is not the default GitHub identicon. |
+| 2 | Profile README | The `<username>/<username>` repository has a README. |
+| 3 | Email in the README | The README contains an email address or a `mailto:` link. |
+| 4 | LinkedIn link | The profile social accounts, website, bio, or README link to `linkedin.com/in/`. |
+| 5 | 5 or more technologies | The README names 5 or more known technologies. |
+| 6 | 10 or more technologies | The README names 10 or more known technologies. |
+| 7 | 5 or more repositories | The user owns 5 or more public repositories that are not forks. |
+| 8 | 10 or more repositories | The user owns 10 or more public repositories that are not forks. |
+| 9 | 2 or more pinned repositories | The profile pins 2 or more repositories. |
+| 10 | 4 or more pinned repositories | The profile pins 4 or more repositories. |
 
-The evaluation itself runs in the evaluator API (`https://github-profile-evaluator.betrybe.dev`). This repository contains only the front end.
+The app finds technologies in three places: icon lists from [skillicons.dev](https://skillicons.dev), [devicon](https://devicon.dev) image URLs, and `logo=` parameters of [shields.io](https://shields.io) badges. It also finds technology names in the plain text of the README. The list of known technologies is in `server/technologies.ts`.
+
+## How it works
+
+The app has two parts:
+
+- **Front end:** a React single-page app in `src/`.
+- **Evaluation endpoint:** `GET /api/evaluation?user=<username>`, in `api/evaluation.ts`. It reads public profile data from the GitHub GraphQL and REST APIs and calculates the grade.
+
+```mermaid
+flowchart LR
+    Home["Home page"] -- "submit username" --> Page["/evaluation/:username"]
+    Page -- "GET /api/evaluation?user=" --> Endpoint["Evaluation endpoint"]
+    Endpoint -- "profile, README, avatar" --> GitHub["GitHub API"]
+    Endpoint -- "JSON result" --> Page
+```
+
+The endpoint needs a GitHub token, because the GraphQL API does not accept requests without one. The token stays on the server. The browser never receives it.
+
+During `npm run dev`, Vite serves the endpoint. On Vercel, the endpoint runs as a serverless function.
 
 ## Tech stack
 
@@ -35,6 +56,8 @@ The evaluation itself runs in the evaluator API (`https://github-profile-evaluat
 - [Chart.js](https://www.chartjs.org) for the grade chart
 - [AOS](https://github.com/michalsnik/aos) for scroll animations
 - [Phosphor Icons](https://phosphoricons.com) for icons
+- [Vitest](https://vitest.dev) for unit tests
+- [Vercel Functions](https://vercel.com/docs/functions) for the evaluation endpoint
 
 ## Getting started
 
@@ -53,30 +76,37 @@ You need Node.js 20 or later. The `.nvmrc` file contains the version that CI use
    npm install
    ```
 
-3. Start the development server.
+3. Create a GitHub token at https://github.com/settings/personal-access-tokens. A fine-grained token with public repository access only is enough.
+
+4. Copy `.env.example` to `.env`, and set the token in `GITHUB_TOKEN`.
+
+   ```bash
+   cp .env.example .env
+   ```
+
+5. Start the development server.
 
    ```bash
    npm run dev
    ```
 
-4. Open http://localhost:5173 in your browser.
+6. Open http://localhost:5173 in your browser.
 
 ## Scripts
 
 | Command | Description |
 | --- | --- |
-| `npm run dev` | Starts the development server with hot reload. |
-| `npm run build` | Runs the type check and builds the app into `dist/`. |
-| `npm run preview` | Serves the `dist/` build on your computer. |
+| `npm run dev` | Starts the development server and the evaluation endpoint. |
+| `npm run build` | Runs the type check and builds the front end into `dist/`. |
+| `npm run preview` | Serves the `dist/` build on your computer. The evaluation endpoint is not available in this mode. |
+| `npm test` | Runs the unit tests. |
 | `npm run typecheck` | Runs the TypeScript type check only. |
 
 ## Configuration
 
-The app reads one optional environment variable. To change it, copy `.env.example` to `.env` and edit the value.
-
-| Variable | Default | Description |
+| Variable | Required | Description |
 | --- | --- | --- |
-| `VITE_EVALUATOR_API_URL` | `https://github-profile-evaluator.betrybe.dev` | Base URL of the evaluator API. |
+| `GITHUB_TOKEN` | Yes | GitHub token that the evaluation endpoint uses to read public profile data. |
 
 ## Routes
 
@@ -88,42 +118,40 @@ The app reads one optional environment variable. To change it, copy `.env.exampl
 
 Any other route shows the error page.
 
-## How it works
-
-```mermaid
-flowchart LR
-    Home["Home page"] -- "submit username" --> Evaluation["/evaluation/:username"]
-    Evaluation -- "GET /evaluation/{user}" --> API["Evaluator API"]
-    API -- "JSON result" --> Evaluation
-    Evaluation --> Result["Grade and criteria"]
-    Evaluation --> NotFound["User not found"]
-    Evaluation --> Error["Error page"]
-```
-
-The evaluation page loads its own data from the URL. For this reason, a page refresh or a shared link shows the same result.
-
 ## Project structure
 
 ```text
+api/
+└── evaluation.ts   # Vercel function: GET /api/evaluation?user=<username>
+server/             # Evaluation logic: GitHub client, criteria, technologies
+shared/             # Types and validation that the server and the front end share
 src/
-├── api/          # Evaluator API client and response types
-├── components/   # Reusable UI components
-├── hooks/        # Theme (dark mode) context
-├── lib/          # Grade tiers and criteria labels
-├── pages/        # One component per route
-├── styles/       # Tailwind entry file
-├── App.tsx       # Route definitions
-└── main.tsx      # App entry point
-public/           # Static files: backgrounds, emojis, favicon
+├── api/            # Client for the evaluation endpoint
+├── components/     # Reusable UI components
+├── hooks/          # Theme (dark mode) context
+├── lib/            # Grade tiers and criteria labels
+├── pages/          # One component per route
+├── styles/         # Tailwind entry file
+├── App.tsx         # Route definitions
+└── main.tsx        # App entry point
+public/             # Static files: backgrounds, emojis, favicon
 ```
 
 ## Deployment
 
-The app is deployed on [Vercel](https://vercel.com). The `vercel.json` file sends all routes to `index.html`, so that React Router can handle them.
+The app is deployed on [Vercel](https://vercel.com). To deploy your own copy, do these steps:
+
+1. Import the repository in Vercel. Vercel detects the Vite project and the `api/` folder.
+2. In the project settings, add the `GITHUB_TOKEN` environment variable.
+3. Deploy.
+
+The `vercel.json` file sends all routes, except `/api/*`, to `index.html`, so that React Router can handle them.
+
+The GitHub API allows 5,000 requests per hour for one token. One evaluation uses two API requests and one avatar download. The endpoint tells the Vercel cache to keep each result for 10 minutes, so that repeated searches do not use the limit.
 
 ## Contributing
 
-To contribute, fork this repository, make your changes on a new branch, and open a pull request. Before you open it, run `npm run build` and make sure that the build passes. You can also open an issue to report a bug or suggest a feature.
+To contribute, fork this repository, make your changes on a new branch, and open a pull request. Before you open it, run `npm test` and `npm run build`, and make sure that both pass. You can also open an issue to report a bug or suggest a feature.
 
 ## Authors
 
