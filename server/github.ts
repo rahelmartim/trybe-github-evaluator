@@ -31,7 +31,7 @@ export class GitHubClient {
     private readonly fetchImpl: typeof fetch = fetch,
   ) {}
 
-  private headers(accept = "application/vnd.github+json"): HeadersInit {
+  private headers(accept = "application/vnd.github+json"): Record<string, string> {
     return {
       Accept: accept,
       Authorization: `Bearer ${this.token}`,

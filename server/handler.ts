@@ -2,7 +2,7 @@ import { isValidUsername } from "../shared/evaluation.js";
 import { evaluateProfile } from "./evaluate.js";
 import { GitHubClient } from "./github.js";
 
-function json(status: number, body: unknown, headers: HeadersInit = {}): Response {
+function json(status: number, body: unknown, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "Content-Type": "application/json", ...headers },
